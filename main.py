@@ -3,7 +3,7 @@ from scrapping import Scrapper
 import csv
 
 def get_ids():
-    caminho_arquivo_csv = 'C:\\Users\\pakkz\\OneDrive\\Desktop\\Web Scrapping Lattes\\id_lattes.csv'
+    caminho_arquivo_csv = 'C:\\Users\\kaypi\\Downloads\\Web-Scrapping-Lattes\\id_lattes.csv'
     ids = []
     with open(caminho_arquivo_csv, newline='') as arquivo_csv:
         lattesIDs = list(csv.reader(arquivo_csv))
@@ -22,9 +22,11 @@ def main():
         
         scrapper.acessar_lattes(url)
         input("enter depois de resolver captcha")
+        foto = scrapper.obter_foto()
         identificacao = scrapper.obter_identificacao()
         endereco = scrapper.obter_endereco()
-        formacao = scrapper.obter_formacao_academica()
+        formacao = scrapper.obter_demais_infos("FormacaoAcademicaTitulacao")
+        formacao_complementar = scrapper.obter_demais_infos("FormacaoComplementar")
 
         print("=== IDENTIFICAÇÃO ===")
         for campo, valor in identificacao.items():
@@ -34,9 +36,17 @@ def main():
         print("\n=== ENDEREÇO ===")
         for campo, valor in endereco.items():
             print(f"{campo}: {valor}")
+
+        print("\n=== URL DA FOTO ===")
+        print(foto)
     
         print("\n=== FORMAÇÃO ACADÊMICA ===")
         for ano, informacao in formacao:
+            print(f"{ano}: {informacao}")
+            print("\n")
+        
+        print("\n=== FORMAÇÃO COMPLEMENTAR ===")
+        for ano, informacao in formacao_complementar:
             print(f"{ano}: {informacao}")
             print("\n")
             

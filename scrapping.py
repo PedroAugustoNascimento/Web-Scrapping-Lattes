@@ -31,6 +31,17 @@ class Scrapper:
         except Exception as e:
             print(f"  [AVISO] Label '{label}' não encontrado: {e}")
             return None
+    
+    def obter_foto(self):
+        try:
+            elemento_foto = self.driver.find_element(By.XPATH,
+                '//img[@class="foto"]')
+            link_foto = elemento_foto.get_attribute("src")
+            return link_foto
+        
+        except Exception as e:
+            print(f"Erro ao obter link da foto: {e}")
+            return None
         
     def obter_identificacao(self):
         return {
@@ -44,20 +55,20 @@ class Scrapper:
             "endereco": self.obter_valor_por_label("Endereço Profissional")
         }
     
-    def obter_formacao_academica(self):
+    def obter_demais_infos(self, secao: str):
         formacao = []
         try:
-            if self.driver.find_elements(By.XPATH, '//a[@name="FormacaoAcademicaTitulacao"]'):
-                print("Formação Acadêmica encontrada")
+            if self.driver.find_elements(By.XPATH, f'//a[@name="{secao}"]'):
+                print(secao, " encontrada")
 
                 anos = self.driver.find_elements(
                 By.XPATH,
-                '//a[@name="FormacaoAcademicaTitulacao"]/../div[contains(@class,"data-cell")]//div[contains(@class,"layout-cell-3")]//div[contains(@class,"layout-cell-pad-5")]//b'
+                f'//a[@name="{secao}"]/../div[contains(@class,"data-cell")]//div[contains(@class,"layout-cell-3")]//div[contains(@class,"layout-cell-pad-5")]//b'
                 )
 
                 informacoes = self.driver.find_elements(
                     By.XPATH,
-                    '//a[@name="FormacaoAcademicaTitulacao"]/../div[contains(@class,"data-cell")]//div[contains(@class,"layout-cell-9")]//div[contains(@class,"layout-cell-pad-5")]'
+                    f'//a[@name="{secao}"]/../div[contains(@class,"data-cell")]//div[contains(@class,"layout-cell-9")]//div[contains(@class,"layout-cell-pad-5")]'
                 )
 
             #print(f"[DEBUG] Anos encontrados: {len(anos)}")
@@ -69,12 +80,12 @@ class Scrapper:
                 if chave and valor:
                     formacao.append((chave, valor))
                 else:
-                    print("Formação Acadêmica não encontrada")
+                    print(secao, " não encontrado")
 
         except Exception as e:
-            print(f"Erro ao obter formação acadêmica: {e}")
+            print(f"Erro ao obter informação: {e}")
 
         return formacao
-    
+
     def fechar_browser(self):
         self.driver.quit()
